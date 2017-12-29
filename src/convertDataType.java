@@ -7,7 +7,7 @@ public class convertDataType {
 
 
     //============================String to byteArray====================================//
-    public byte[] StringToBytes(String Value,int Order)
+    public static byte[] StringToBytes(String Value,int Order)
     {
         byte[] temp = Value.getBytes();
         temp = ChangeByteOrder(temp,Order);
@@ -19,7 +19,7 @@ public class convertDataType {
      * @param Value 읽을 바이트 배열
      * @return String
      */
-    public String ByteArrayToString(byte[] Value,int Order)
+    public static String ByteArrayToString(byte[] Value,int Order)
     {
         byte[] temp = Value;
         temp = ChangeByteOrder(temp,Order);
@@ -32,7 +32,7 @@ public class convertDataType {
      * @param len 읽을 바이트 배열 길이
      * @return 스트링 문자열
      */
-    public String BytesToString(byte[] oridata,int start,int len,int Order)
+    public static String BytesToString(byte[] oridata,int start,int len,int Order)
     {
         byte[] temp = new byte[len];
         System.arraycopy(oridata,start,temp,0,len);
@@ -41,7 +41,7 @@ public class convertDataType {
     }
 
     //===========================Short to byteArray===================================//
-    public byte[] ShortToBytes(short Value,int Order)
+    public static byte[] ShortToBytes(short Value,int Order)
     {
         byte[] temp;
         temp = new byte[]{(byte)((Value & 0xFF00) >> 8),(byte)(Value & 0x00FF) };
@@ -56,7 +56,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return
      */
-    public short BytesToShort(byte[] Value,int Order)
+    public static short BytesToShort(byte[] Value,int Order)
     {
         short newValue = 0;
         byte[] temp = Value;
@@ -75,7 +75,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return short
      */
-    public short BytesToShort(byte[] oridata,int start,int len,int Order)
+    public static short BytesToShort(byte[] oridata,int start,int len,int Order)
     {
         short newValue = 0;
         byte[] temp = new byte[len];
@@ -96,7 +96,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return 변환된 바이트 배열
      */
-    public byte[] IntToBytes(int Value,int Order)
+    public static byte[] IntToBytes(int Value,int Order)
     {
         byte[] temp = new byte[4];
         ByteBuffer buff = ByteBuffer.allocate(Integer.SIZE/8);
@@ -111,7 +111,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return int
      */
-    public int BytesToInt(byte[] Value,int Order)
+    public static int BytesToInt(byte[] Value,int Order)
     {
         ByteBuffer buff = ByteBuffer.allocate(4);
         buff = ByteBuffer.wrap(Value);
@@ -128,7 +128,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return int
      */
-    public int BytesToInt(byte[] oridata,int start,int len,int Order)
+    public static int BytesToInt(byte[] oridata,int start,int len,int Order)
     {
         byte[] temp = new byte[len];
         System.arraycopy(oridata,start,temp,0,len);
@@ -147,7 +147,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return 바이트 어레이
      */
-    public byte[] FloatTobytes(float value,int Order)
+    public static byte[] FloatTobytes(float value,int Order)
     {
         byte[] Temp = new byte[4];
 
@@ -168,7 +168,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return float
      */
-    public float BytesToFloat (byte[] Value,int Order)
+    public static float BytesToFloat (byte[] Value,int Order)
     {
         int accum = 0;
         int i = 0;
@@ -192,7 +192,7 @@ public class convertDataType {
      * @param Order BIG_EDIAN,Little_EDIAN 변수에 적용되어 있음
      * @return float
      */
-    public float BytesTofloat(byte[] oridata,int start,int len,int Order)
+    public static float BytesTofloat(byte[] oridata,int start,int len,int Order)
     {
         int accum = 0;
         int i = 0;
@@ -211,7 +211,7 @@ public class convertDataType {
 
 
     //====================================== 위치 바꾸는 함수==================================//
-    private byte[] ChangeByteOrder(byte[] value,int Order)
+    private static byte[] ChangeByteOrder(byte[] value,int Order)
     {
         int idx = value.length;
         byte[]Temp = new byte[idx];

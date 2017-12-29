@@ -1,5 +1,6 @@
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.sql.ResultSet;
 
 public class LoginServer {
     public static final String mClassName="LoginServer";
@@ -7,6 +8,15 @@ public class LoginServer {
     public static void main(String[] args)
     {
         ServerSocket serverSocket=null;
+
+        //DBManager dbManager = new DBManager();
+
+        MyOracleDB myOracleDB = new MyOracleDB("salhyun", "333333333");
+        int c = myOracleDB.getTableCount("account");
+
+        ResultSet resultSet = myOracleDB.queryTable("account", "name");
+
+        myOracleDB.disconnectDriver();
 
         int nPort=9100;
         try {
