@@ -11,12 +11,21 @@ public class LoginServer {
 
         //DBManager dbManager = new DBManager();
 
-        MyOracleDB myOracleDB = new MyOracleDB("salhyun", "333333333");
-        int c = myOracleDB.getTableCount("account");
+        DBManager DBManager = new DBManager("salhyun", "333333333");
+        int c = DBManager.getTableCount("account");
 
-        ResultSet resultSet = myOracleDB.queryTable("account", "name");
+        //ResultSet resultSet = DBManager.queryTable("account", "name");
 
-        myOracleDB.disconnectDriver();
+        AccountInfo accountInfo = new AccountInfo("mark", "roth@gmail.com", "333444");
+
+        AccountInfoAdapter accountInfoAdapter = new AccountInfoAdapter();
+        accountInfoAdapter.accountInfos.add(accountInfo);
+
+        //DBManager.queryInsert("account", accountInfoAdapter);
+
+        //DBManager.querySearch("account", "name", "salhyun", accountInfoAdapter);
+
+        DBManager.disconnectDriver();
 
         int nPort=9100;
         try {
