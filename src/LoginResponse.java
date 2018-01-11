@@ -27,6 +27,18 @@ public class LoginResponse {
             int nMessageType=0;
             String messagebody="";
             len=inStream.read(buf, len, buf.length);
+
+            //유효성 검사
+            int nIdentify = MySocketMessage.getMessageIdentify(buf);
+            if(nIdentify != MySocketMessage.MESSAGE_IDENTIFY)//유효하지 않는 메시지
+            {
+                outStream.flush();
+                outStream.close();
+                inStream.close();
+                con.close();
+                return;
+            }
+
             nMessageSize = MySocketMessage.getMessageSize(buf);
             while(len < nMessageSize)
             {
@@ -39,15 +51,25 @@ public class LoginResponse {
             }
 
             nMessageType = MySocketMessage.getMessageType(buf);
-            messagebody = MySocketMessage.getMessageBodyString(buf);
-            System.out.println("received message body=" + "\"" + messagebody + "\"");
 
             if(charset.equals("UTF-8"))
             {
-                //messagebody += strResult;
                 System.out.println("to send message=" + "\"" + messagebody + "\"");
 
-                outStream.write(messagebody.getBytes(), 0, messagebody.getBytes().length);
+                if(nMessageType == MySocketMessage.MESSAGETYPE_REQUEST)
+                {
+                    if(MySocketMessage.getMessageKind(buf) == MySocketMessage.MESSAGEKIND_ECHO)
+                    {
+                        messagebody = MySocketMessage.getMessageBodyString(buf);
+
+                        MySocketMessage mySocketMessage = new MySocketMessage();
+                        byte []msgEcho = mySocketMessage.addMessageHeader(messagebody.getBytes(), MySocketMessage.MESSAGE_IDENTIFY, MySocketMessage.MESSAGETYPE_RESPONSE, MySocketMessage.MESSAGEKIND_ECHO);
+                        outStream.write(msgEcho, 0, msgEcho.length);
+                    }
+                }
+
+                //해당 계정
+                DBManager DBManager = new DBManager("salhyun", "333333333");
             }
             else if(charset.equals("EUC-KR"))
             {

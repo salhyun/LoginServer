@@ -1,6 +1,8 @@
 
 public class MySocketMessage {
-	
+
+    public static final int MESSAGE_IDENTIFY=333;
+
 	public static final int MESSAGETYPE_REQUEST=1;
     public static final int MESSAGETYPE_RESPONSE=2;
 
@@ -8,23 +10,25 @@ public class MySocketMessage {
     public static final int MESSAGEKIND_SEARCH=1;
     public static final int MESSAGEKIND_ACCOUNT=2;
 
-    private static final int MESSAGETYPENUM=3;//type + kind + size
+    private static final int MESSAGETYPENUM=4;//identify + type + kind + size
 
     private static final int mIntSizeInByte=Integer.SIZE/Byte.SIZE;
     private static final int mHeaderSize=mIntSizeInByte*MESSAGETYPENUM;
 
-    public static byte[] addMessageHeader(byte []message, int messageType, int messageKind)
+    public static byte[] addMessageHeader(byte []message, int messageIdentify, int messageType, int messageKind)
     {
-        convertDataType cdt = new convertDataType();
-
         int totalSize = mHeaderSize+message.length;
-        byte []msgType = cdt.IntToBytes(messageType, convertDataType.BIG_EDIAN);
-        byte []msgKind = cdt.IntToBytes(messageKind, convertDataType.BIG_EDIAN);
-        byte []msgHSize = cdt.IntToBytes(totalSize, convertDataType.BIG_EDIAN);
+        byte []msgIdentify = convertDataType.IntToBytes(messageIdentify, convertDataType.BIG_EDIAN);
+        byte []msgType = convertDataType.IntToBytes(messageType, convertDataType.BIG_EDIAN);
+        byte []msgKind = convertDataType.IntToBytes(messageKind, convertDataType.BIG_EDIAN);
+        byte []msgHSize = convertDataType.IntToBytes(totalSize, convertDataType.BIG_EDIAN);
 
         byte[] result = new byte[totalSize];
 
         int destPos=0;
+        System.arraycopy(msgIdentify, 0, result, destPos, msgType.length);
+        destPos += msgType.length;
+
         System.arraycopy(msgType, 0, result, destPos, msgType.length);
         destPos += msgType.length;
 
@@ -38,20 +42,21 @@ public class MySocketMessage {
 
         return result;
     }
+    public static int getMessageIdentify(byte []buf)
+    {
+        return convertDataType.BytesToInt(buf, 0, mIntSizeInByte, convertDataType.BIG_EDIAN);
+    }
     public static int getMessageType(byte []buf)
     {
-        convertDataType cdt = new convertDataType();
-        return cdt.BytesToInt(buf, 0, mIntSizeInByte, convertDataType.BIG_EDIAN);
+        return convertDataType.BytesToInt(buf, mIntSizeInByte, mIntSizeInByte, convertDataType.BIG_EDIAN);
     }
     public static int getMessageKind(byte []buf)
     {
-        convertDataType cdt = new convertDataType();
-        return cdt.BytesToInt(buf, mIntSizeInByte, mIntSizeInByte, convertDataType.BIG_EDIAN);
+        return convertDataType.BytesToInt(buf, mIntSizeInByte*2, mIntSizeInByte, convertDataType.BIG_EDIAN);
     }
     public static int getMessageSize(byte []buf)
     {
-        convertDataType cdt = new convertDataType();
-        return cdt.BytesToInt(buf, mIntSizeInByte*2, mIntSizeInByte, convertDataType.BIG_EDIAN);
+        return convertDataType.BytesToInt(buf, mIntSizeInByte*3, mIntSizeInByte, convertDataType.BIG_EDIAN);
     }
     public static byte[] getMessageBody(byte []buf)
     {
@@ -68,8 +73,7 @@ public class MySocketMessage {
         byte []body = new byte[bodySize];
         System.arraycopy(buf, mHeaderSize, body, 0, bodySize);
 
-        convertDataType cdt = new convertDataType();
-        return cdt.ByteArrayToString(body, convertDataType.BIG_EDIAN);
+        return convertDataType.ByteArrayToString(body, convertDataType.BIG_EDIAN);
     }
 
     public static int getHeaderSize()
