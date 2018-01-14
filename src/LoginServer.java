@@ -9,23 +9,39 @@ public class LoginServer {
     {
         ServerSocket serverSocket=null;
 
-        //DBManager dbManager = new DBManager();
+//        //DBManager dbManager = new DBManager();
+//
+//        DBManager DBManager = new DBManager("salhyun", "333333333");
+//        int c = DBManager.getTableCount("account");
+//
+//        //ResultSet resultSet = DBManager.queryTable("account", "name");
+//
+//        AccountInfo accountInfo = new AccountInfo("mark", "roth@gmail.com", "333444");
+//
+//        AccountInfoAdapter accountInfoAdapter = new AccountInfoAdapter();
+//        accountInfoAdapter.accountInfos.add(accountInfo);
+//
+//        //DBManager.queryInsert("account", accountInfoAdapter);
+//
+//        //DBManager.querySearch("account", "name", "salhyun", accountInfoAdapter);
+//
+//        DBManager.disconnectDriver();
 
-        DBManager DBManager = new DBManager("salhyun", "333333333");
-        int c = DBManager.getTableCount("account");
+        String message = "I am your father";
 
-        //ResultSet resultSet = DBManager.queryTable("account", "name");
+        byte []a1 = convertDataType.StringToBytes(message, convertDataType.BIG_EDIAN);
+        byte []a2 = convertDataType.StringToBytes(message, convertDataType.Little_EDIAN);
 
-        AccountInfo accountInfo = new AccountInfo("mark", "roth@gmail.com", "333444");
+        String b1 = convertDataType.BytesToString(a1, 0, a1.length, convertDataType.BIG_EDIAN);
+        String b2 = convertDataType.BytesToString(a2, 0, a2.length, convertDataType.Little_EDIAN);
 
-        AccountInfoAdapter accountInfoAdapter = new AccountInfoAdapter();
-        accountInfoAdapter.accountInfos.add(accountInfo);
+        int identify = 333;
 
-        //DBManager.queryInsert("account", accountInfoAdapter);
+        byte []a3 = convertDataType.IntToBytes(identify, convertDataType.BIG_EDIAN);
+        byte []a4 = convertDataType.IntToBytes(identify, convertDataType.Little_EDIAN);
 
-        //DBManager.querySearch("account", "name", "salhyun", accountInfoAdapter);
-
-        DBManager.disconnectDriver();
+        int b3 = convertDataType.BytesToInt(a3, convertDataType.BIG_EDIAN);
+        int b4 = convertDataType.BytesToInt(a4, convertDataType.Little_EDIAN);
 
         int nPort=9100;
         try {

@@ -15,13 +15,16 @@ public class MySocketMessage {
     private static final int mIntSizeInByte=Integer.SIZE/Byte.SIZE;
     private static final int mHeaderSize=mIntSizeInByte*MESSAGETYPENUM;
 
-    public static byte[] addMessageHeader(byte []message, int messageIdentify, int messageType, int messageKind)
+    public static byte[] addMessageHeader(String message, int messageType, int messageKind)
     {
-        int totalSize = mHeaderSize+message.length;
-        byte []msgIdentify = convertDataType.IntToBytes(messageIdentify, convertDataType.BIG_EDIAN);
+        byte []messageBuf = convertDataType.StringToBytes(message, convertDataType.BIG_EDIAN);
+
+        byte []msgIdentify = convertDataType.IntToBytes(MESSAGE_IDENTIFY, convertDataType.BIG_EDIAN);
         byte []msgType = convertDataType.IntToBytes(messageType, convertDataType.BIG_EDIAN);
         byte []msgKind = convertDataType.IntToBytes(messageKind, convertDataType.BIG_EDIAN);
-        byte []msgHSize = convertDataType.IntToBytes(totalSize, convertDataType.BIG_EDIAN);
+
+        int totalSize = mHeaderSize+messageBuf.length;
+        byte []msgSize = convertDataType.IntToBytes(totalSize, convertDataType.BIG_EDIAN);
 
         byte[] result = new byte[totalSize];
 
@@ -35,10 +38,10 @@ public class MySocketMessage {
         System.arraycopy(msgKind, 0, result, destPos, msgKind.length);
         destPos += msgKind.length;
 
-        System.arraycopy(msgHSize, 0, result, destPos, msgHSize.length);
-        destPos += msgHSize.length;
+        System.arraycopy(msgSize, 0, result, destPos, msgSize.length);
+        destPos += msgSize.length;
 
-        System.arraycopy(message, 0, result, destPos, message.length);
+        System.arraycopy(messageBuf, 0, result, destPos, messageBuf.length);
 
         return result;
     }

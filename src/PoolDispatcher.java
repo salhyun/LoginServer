@@ -25,5 +25,12 @@ public class PoolDispatcher {
 
 	private void dispatchLoop(ServerSocket server)
 	{
+		LoginResponse loginResponse = new LoginResponse();
+
+		while(true)
+		{
+			loginResponse.accept(server, "UTF-8");
+		}
+
 	}
 }
