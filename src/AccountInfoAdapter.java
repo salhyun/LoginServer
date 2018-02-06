@@ -21,7 +21,8 @@ public class AccountInfoAdapter extends DBTableAdapter {
         result += " values(";
         result += "'" + accountInfo.name + "'";
         result += ", '" + accountInfo.email + "'";
-        result += ", '" + accountInfo.number + "'";
+        result += ", " + accountInfo.level;
+        result += ", " + accountInfo.gold;
         result += ")";
 
         return result;
@@ -37,10 +38,11 @@ public class AccountInfoAdapter extends DBTableAdapter {
 
                 accountInfo.name = resultSet.getString("name");
                 accountInfo.email = resultSet.getString("email");
-                accountInfo.number = resultSet.getString("number");
+                accountInfo.level = resultSet.getInt("level");
+                accountInfo.gold = resultSet.getInt("gold");
                 accountInfos.add(accountInfo);
 
-                System.out.println("name = " + accountInfo.name + ", email = " + accountInfo.email + ", number = " + accountInfo.number);
+                System.out.println("name = " + accountInfo.name + ", email = " + accountInfo.email + "level = " + accountInfo.level + ", gold = " + accountInfo.gold);
             }
 
         } catch (SQLException e) {

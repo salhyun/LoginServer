@@ -5,8 +5,9 @@ public class PoolDispatcher {
 	
 	private int numThreads=5;
 
-	public PoolDispatcher()
-	{		
+	public PoolDispatcher(int num_threads)
+	{
+		numThreads = num_threads;
 	}
 	
 	public void startDispatching(final ServerSocket server)
@@ -15,10 +16,10 @@ public class PoolDispatcher {
 		{
 			Thread thread = new Thread() {
 				public void run() {
-					dispatchLoop(server);					
+					dispatchLoop(server);
 				}
 			};
-			thread.start();			
+			thread.start();
 		}
 		dispatchLoop(server);
 	}

@@ -7,8 +7,11 @@ public class MySocketMessage {
     public static final int MESSAGETYPE_RESPONSE=2;
 
     public static final int MESSAGEKIND_ECHO=0;
-    public static final int MESSAGEKIND_SEARCH=1;
-    public static final int MESSAGEKIND_ACCOUNT=2;
+    public static final int MESSAGEKIND_PINGTEST=1;
+    public static final int MESSAGEKIND_SEARCH=2;
+    public static final int MESSAGEKIND_LOGIN=3;
+    public static final int MESSAGEKIND_LOBBYADDRESS=4;
+    public static final int MESSAGEKIND_LOBBYENTERANCE=5;
 
     private static final int MESSAGETYPENUM=4;//identify + type + kind + size
 

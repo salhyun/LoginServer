@@ -58,7 +58,7 @@ public class DBManager implements AutoCloseable {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("connected oracle driver");
+		System.out.println("connected : " + url);
 	}
 
 	public void disconnectDriver() {
@@ -70,7 +70,7 @@ public class DBManager implements AutoCloseable {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("disconnected oracle driver");
+		System.out.println("disconnected : " + url);
 	}
 
 	public ResultSet doQuery(String query) {
@@ -108,8 +108,9 @@ public class DBManager implements AutoCloseable {
 		}
 	}
 
-	public void queryInsert(String table, DBTableAdapter dbTableAdapter) {
+	public int queryInsert(String table, DBTableAdapter dbTableAdapter) {
 
+		int result=0;
 		int tableCount = getTableCount(table);
 
 		String query = "insert into " + table;
@@ -118,7 +119,7 @@ public class DBManager implements AutoCloseable {
 			for (int i = 0; i < dbTableAdapter.getTableCount(); i++) {
 				String insertQuery = query + dbTableAdapter.setDBTable(tableCount, i);
 
-				int result = statement.executeUpdate(insertQuery);
+				result = statement.executeUpdate(insertQuery);
 				if (result == 1)
 					System.out.println("insert success!");
 				else
@@ -130,13 +131,15 @@ public class DBManager implements AutoCloseable {
 		}
 
 		System.out.println(query);
+		return result;
 	}
-	public void queryDelete(String table, String whereColumn, String word)
+	public int queryDelete(String table, String whereColumn, String word)
 	{
+		int result=0;
 		String query = "delete from " + table + " where " + whereColumn + " = '" + word + "'";
 
 		try {
-				int result = statement.executeUpdate(query);
+				result = statement.executeUpdate(query);
 				if (result > 0)
 					System.out.println("delete count " + result);
 				else
@@ -144,6 +147,7 @@ public class DBManager implements AutoCloseable {
 			} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 	public ResultSet queryTable(String table, String column)
 	{
@@ -158,14 +162,15 @@ public class DBManager implements AutoCloseable {
 		}
 		return resultSet;
 	}
-	public void queryUpdate(String table, String setColumn, String newValue, String where, String whereColumn)
+	public int queryUpdate(String table, String setColumn, String newValue, String where, String whereColumn)
 	{
+		int result=0;
 		String sqlquery = "UPDATE " + table
 				+ " SET " + setColumn + " = '" + newValue + "'"
 				+ " WHERE " + where + " = '" + whereColumn + "'";
 
 		try {
-			int result = statement.executeUpdate(sqlquery);
+			result = statement.executeUpdate(sqlquery);
 			if (result == 1)
 				System.out.println("insert success!");
 			else
@@ -174,6 +179,7 @@ public class DBManager implements AutoCloseable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
 	public int getTableCount(String tableName)

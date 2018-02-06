@@ -25,6 +25,7 @@ public class LoginResponse {
             int len=0, nMessageSize=0;
 
             int nMessageType=0;
+            int nMessageKind=0;
             String messagebody="";
             len=inStream.read(buf, len, buf.length);
 
@@ -58,20 +59,76 @@ public class LoginResponse {
             {
                 if(nMessageType == MySocketMessage.MESSAGETYPE_REQUEST)
                 {
-                    if(MySocketMessage.getMessageKind(buf) == MySocketMessage.MESSAGEKIND_ECHO)
+                    nMessageKind = MySocketMessage.getMessageKind(buf);
+                    if(nMessageKind == MySocketMessage.MESSAGEKIND_ECHO)
                     {
                         messagebody = MySocketMessage.getMessageBodyString(buf);
 
-                        MySocketMessage mySocketMessage = new MySocketMessage();
-                        byte []msgEcho = mySocketMessage.addMessageHeader(messagebody, MySocketMessage.MESSAGETYPE_RESPONSE, MySocketMessage.MESSAGEKIND_ECHO);
-                        outStream.write(msgEcho, 0, msgEcho.length);
+                        byte []respEcho = MySocketMessage.addMessageHeader(messagebody, MySocketMessage.MESSAGETYPE_RESPONSE, MySocketMessage.MESSAGEKIND_ECHO);
+                        outStream.write(respEcho, 0, respEcho.length);
 
-                        System.out.println("echo message = " + messagebody);
+                        System.out.println("Response echo message = " + messagebody);
+                    }
+                    else if(nMessageKind == MySocketMessage.MESSAGEKIND_LOGIN)
+                    {
+                        //해당 계정
+                        DBManager dbManager = new DBManager("salhyun", "333333333");
+
+                        messagebody = MySocketMessage.getMessageBodyString(buf);
+
+                        AccountInfoAdapter accountInfoAdapter = new AccountInfoAdapter();
+                        dbManager.querySearch("account", "email", messagebody, accountInfoAdapter);
+
+                        byte[] respBuf=null;
+                        if(accountInfoAdapter.accountInfos.isEmpty())
+                        {
+                            //respBuf = MySocketMessage.addMessageHeader("there is no account", MySocketMessage.MESSAGETYPE_RESPONSE, MySocketMessage.MESSAGEKIND_LOGIN);
+
+                            //이메일에서 '@' 앞에를 name으로 사용한다.
+                            int at = messagebody.indexOf("@");
+                            String name = messagebody.substring(0, at);
+                            accountInfoAdapter.accountInfos.add(new AccountInfo(name, messagebody, 1, 100));
+                            if(dbManager.queryInsert("account", accountInfoAdapter) == 1)
+                            {
+                                respBuf = MySocketMessage.addMessageHeader("welcome " + name, MySocketMessage.MESSAGETYPE_RESPONSE, MySocketMessage.MESSAGEKIND_LOGIN);
+                            }
+                            else
+                            {
+                                System.out.println("데이타베이스 서버에 접속할 수 없습니다.");
+                            }
+                        }
+                        else
+                        {
+                            respBuf = MySocketMessage.addMessageHeader("login success", MySocketMessage.MESSAGETYPE_RESPONSE, MySocketMessage.MESSAGEKIND_LOGIN);
+
+                            AccountManager.getInstance().addConnectedAccount(accountInfoAdapter.accountInfos.get(0));
+                        }
+
+                        outStream.write(respBuf, 0, respBuf.length);
+
+                        System.out.println("Response Login = " + MySocketMessage.getMessageBodyString(respBuf));
+
+                        dbManager.disconnectDriver();
+                    }
+                    else if(nMessageKind == MySocketMessage.MESSAGEKIND_LOBBYADDRESS)
+                    {
+                        byte[] respBuf=null;
+
+                        //요청한 사용자 접속상태인지 확인 후 lobby address 전송
+                        messagebody = MySocketMessage.getMessageBodyString(buf);
+                        if(AccountManager.getInstance().findAccount(messagebody))
+                        {
+                            String lobbyAddr = "127.0.0.1@9100@";//ip address @ port @
+                            respBuf = MySocketMessage.addMessageHeader(lobbyAddr, MySocketMessage.MESSAGETYPE_RESPONSE, MySocketMessage.MESSAGEKIND_LOBBYADDRESS);
+                            outStream.write(respBuf, 0, respBuf.length);
+                        }
+                        else
+                        {
+                            System.out.println("접속되지 않는 사용자가 요청하였습니다. " + messagebody);
+                        }
                     }
                 }
 
-                //해당 계정
-                //DBManager DBManager = new DBManager("salhyun", "333333333");
             }
             else if(charset.equals("EUC-KR"))
             {

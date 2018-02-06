@@ -1,6 +1,6 @@
-import java.net.InetAddress;
-import java.net.ServerSocket;
+import java.net.*;
 import java.sql.ResultSet;
+import java.util.Enumeration;
 
 public class LoginServer {
     public static final String mClassName="LoginServer";
@@ -9,22 +9,21 @@ public class LoginServer {
     {
         ServerSocket serverSocket=null;
 
-//        //DBManager dbManager = new DBManager();
-//
+        //DBManager dbManager = new DBManager();
+
 //        DBManager DBManager = new DBManager("salhyun", "333333333");
 //        int c = DBManager.getTableCount("account");
 //
 //        //ResultSet resultSet = DBManager.queryTable("account", "name");
 //
 //        AccountInfo accountInfo = new AccountInfo("mark", "roth@gmail.com", "333444");
-//
+
 //        AccountInfoAdapter accountInfoAdapter = new AccountInfoAdapter();
 //        accountInfoAdapter.accountInfos.add(accountInfo);
 //
-//        //DBManager.queryInsert("account", accountInfoAdapter);
-//
-//        //DBManager.querySearch("account", "name", "salhyun", accountInfoAdapter);
-//
+//        DBManager.queryInsert("account", accountInfoAdapter);
+
+//        DBManager.querySearch("account", "name", "salhyun", accountInfoAdapter);
 //        DBManager.disconnectDriver();
 
         String message = "I am your father";
@@ -47,10 +46,13 @@ public class LoginServer {
         try {
             serverSocket = new ServerSocket(nPort);
             InetAddress localAddress = InetAddress.getLocalHost();
-            String serverIP = localAddress.getHostAddress();
-            System.out.println("Login Server started ip = " + serverIP);
 
-            PoolDispatcher poolDispatcher = new PoolDispatcher();
+            String OfficalIP = getCurrentNetworkIP();
+            String LocalIP = localAddress.getHostAddress();
+            System.out.println("Local IP = " + LocalIP);
+            System.out.println("Offcial IP = " + OfficalIP);
+
+            PoolDispatcher poolDispatcher = new PoolDispatcher(5);
             poolDispatcher.startDispatching(serverSocket);
 
         } catch (Exception e) {
@@ -58,5 +60,45 @@ public class LoginServer {
         }
 
         System.out.println("End of LoginServer!!");
+    }
+
+    public static String getCurrentNetworkIP()
+    {
+        Enumeration netInterfaces=null;
+
+        try {
+            netInterfaces = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+        while (netInterfaces.hasMoreElements())
+        {
+            NetworkInterface ni = (NetworkInterface) netInterfaces.nextElement();
+            Enumeration address = ni.getInetAddresses();
+            if (address == null)
+                return getLocalIP();
+
+            while(address.hasMoreElements())
+            {
+                InetAddress addr = (InetAddress)address.nextElement();
+                if(!addr.isLoopbackAddress() && !addr.isSiteLocalAddress() && !addr.isAnyLocalAddress())
+                {
+                    String ip = addr.getHostAddress();
+                    if(ip.indexOf(".") != -1 && ip.indexOf(":") == -1)
+                        return  ip;
+                }
+            }
+        }
+        return getLocalIP();
+    }
+    public static String getLocalIP()
+    {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
